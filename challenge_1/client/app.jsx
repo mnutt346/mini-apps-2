@@ -21,6 +21,7 @@ class App extends React.Component {
     this.getCurrentEventData();
   }
 
+  // Gets the total page count for all items in DB
   getPageCount() {
     let { itemsPerPage } = this.state;
     Axios.get(`http://localhost:3000/events`)
@@ -35,6 +36,7 @@ class App extends React.Component {
   getCurrentEventData() {
     let { currentPage, itemsPerPage, searchInput } = this.state;
     if (!searchInput) {
+      // Gets next page when no search is executed
       Axios.get(
         `http://localhost:3000/events?_page=${currentPage}&_limit=${itemsPerPage}`
       ).then(response => {
@@ -43,14 +45,27 @@ class App extends React.Component {
         });
       });
     } else {
+      // Gets the next page based on search input
       Axios.get(
-        `http://localhost:3000/events?p=${searchInput}_page=${currentPage}&_limit=${itemsPerPage}`
+        `http://localhost:3000/events?q=${searchInput}&_page=${currentPage}&_limit=${itemsPerPage}`
       ).then(response => {
         this.setState({
           currentEvents: response.data
         });
       });
     }
+  }
+
+  // Gets page count for search results
+  getSearchPageCount() {
+    let { itemsPerPage, searchInput } = this.state;
+    Axios.get(`http://localhost:3000/events?q=${searchInput}`).then(
+      response => {
+        this.setState({
+          pageCount: Math.ceil(response.data.length / itemsPerPage)
+        });
+      }
+    );
   }
 
   handleClick = async e => {
@@ -62,16 +77,20 @@ class App extends React.Component {
     this.setState({ searchInput: e.target.value });
   };
 
-  handleSubmit = e => {
-    e.preventDefault();
-    console.log("SUBMIT");
+  handleSearchClick = async event => {
+    event.preventDefault();
+    await this.getCurrentEventData();
+    this.getSearchPageCount();
   };
 
   render() {
     let { currentEvents } = this.state;
     return (
       <div className="app-container">
-        <Search handleSearchInput={this.handleSearchInput} />
+        <Search
+          handleSearchInput={this.handleSearchInput}
+          handleSearchClick={this.handleSearchClick}
+        />
         <div className="events-container">
           <Events currentEvents={currentEvents} />
         </div>
