@@ -2,10 +2,16 @@ import React from "react";
 
 const Events = props =>
   props.currentEvents.map((event, index) => {
-    return (
+    return parseInt(event.date) < 0 ? (
       <div key={index} className="event-container">
         <p>
-          {event.date} {event.description}
+          {parseInt(event.date) * -1}BC: {event.description}
+        </p>
+      </div>
+    ) : (
+      <div key={index} className="event-container">
+        <p>
+          {event.date}: {event.description}
         </p>
       </div>
     );

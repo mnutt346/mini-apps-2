@@ -4,6 +4,7 @@ import ReactPaginate from "react-paginate";
 import Axios from "axios";
 import Events from "./components/events.jsx";
 import Search from "./components/search.jsx";
+import Header from "./components/header.jsx";
 require("../styles.css");
 require("babel-polyfill");
 
@@ -87,10 +88,13 @@ class App extends React.Component {
     let { currentEvents } = this.state;
     return (
       <div className="app-container">
-        <Search
-          handleSearchInput={this.handleSearchInput}
-          handleSearchClick={this.handleSearchClick}
-        />
+        <Header />
+        <div className="search-container">
+          <Search
+            handleSearchInput={this.handleSearchInput}
+            handleSearchClick={this.handleSearchClick}
+          />
+        </div>
         <div className="events-container">
           <Events currentEvents={currentEvents} />
         </div>
